@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corona Live Update</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script
+    src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        body{
+            background: #EF5C76;
+        }
+    </style>
+</head>
+<body onload="fetch()">
+
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+        <a class="navbar-brand" href="#">
+            <img src="img/Corona.png" alt="Logo" style="width: 42px;">
+        </a>
+        <a class="navbar-brand" href="#" style="font-family: cursive; font-size: 1.8em; color: tomato;"> Know Corona.live </a>
+    </nav>
+
+    <Section class="Corona_update container-fluid">
+        <div class="mb-3">
+            <h3 class="text-center text-uppercase pt-3"> COVID-19 LIVE UPDATES OF THE INDIA DAYWISE  </h3>
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-striped text-center table-dark" id="tbval">
+                <tr>
+                    <th style="color: #ff00ff;">Date</th>
+                    <th style="color: #1e90ff;">DailyConfirmed</th>
+                    <th style="color: #ff1122;">DailyDeceased</th>
+                    <th style="color: #00ff44;">DailyRecovered</th>
+                    <th style="color: #1e90ff;">TotalConfirmed</th>
+                    <th style="color: #ff1122;">TotalDeceased</th>
+                    <th style="color: #00ff44;">TotalRecovered</th>
+                </tr>
+
+        
+            </table>
+
+        </div>
+    </Section>
+
+    <script>
+        function fetch(){
+            $.get("https://api.covid19india.org/data.json",
+ 
+                function (data){
+                    //console.log(data['Countries'].length);
+                    var tbval = document.getElementById('tbval');
+
+                    for(var i=1; i<(data['cases_time_series'].length); i++){
+                        var x = tbval.insertRow();
+
+                        x.insertCell(0);
+                        tbval.rows[i].cells[0].innerHTML = data['cases_time_series'][i]['date'];
+                        
+                        x.insertCell(1);
+                        tbval.rows[i].cells[1].innerHTML = data['cases_time_series'][i]['dailyconfirmed'];
+
+                        x.insertCell(2);
+                        tbval.rows[i].cells[2].innerHTML = data['cases_time_series'][i]['dailydeceased'];
+                        
+                        x.insertCell(3);
+                        tbval.rows[i].cells[3].innerHTML = data['cases_time_series'][i]['dailyrecovered'];
+                        
+                        x.insertCell(4);
+                        tbval.rows[i].cells[4].innerHTML = data['cases_time_series'][i]['totalconfirmed'];
+                        
+                        x.insertCell(5);
+                        tbval.rows[i].cells[5].innerHTML = data['cases_time_series'][i]['totaldeceased'];
+                        
+                        x.insertCell(6);
+                        tbval.rows[i].cells[6].innerHTML = data['cases_time_series'][i]['totalrecovered'];
+                        
+
+                    }
+                }
+            )
+        }
+    </script>
+
+</body>
+</html>
+
+
