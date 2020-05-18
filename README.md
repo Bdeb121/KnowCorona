@@ -1,4 +1,4 @@
 # KnowCorona
 Covid-19 live data
 
-hello friends i love to coad
+Hello Friends I Love to Code
