@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Of Continents</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+
+    <link rel="stylesheet" href="css/jquery-jvectormap-2.0.5.css">
+
+    <style>
+        *{
+          margin: 0;
+          padding: 0;
+          font-family: sans-serif;
+        }
+        #Continents-map{
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="Continents-map"></div>
+
+    <script src="js/jquery-jvectormap-2.0.5.min.js"></script>
+    <script src="js/jquery-jvectormap-continents-merc.js"></script>
+
+    <script>
+
+      function loadmap(){
+
+          $.ajax({
+
+              url: "https://corona.lmao.ninja/v2/continents",
+
+              error: function(){
+                  alert("Problem with fetching data from API, Please try after sometime")
+              },
+
+              success: function(data) {
+
+                  //console.log(data);
+
+                  var Total_ContinentWiseCase = {};
+                  var Total_ContinentWiseDeaths = {};
+                  var Total_ContinentWiseCured = {};
+
+                  var Today_ContinentWiseCase = {};
+                  var Today_ContinentWiseDeaths = {};
+                  var Today_ContinentWiseCured = {};
+
+                  var Total_ContinentWiseActive = {};
+                  var Total_ContinentWiseCritical = {};
+
+                  var Total_ContinentWisePopulation = {};
+                  var Total_ContinentWiseTests = {};
+                  
+                  var ContinentWise_Countries = {};
+
+
+                  for(var i=0; i< data.length; i++) {
+
+                      var elem = data[i];
+                      var Continent = elem.continent;
+
+                      Total_ContinentWiseCase[Continent] = elem.cases;
+                      Total_ContinentWiseCured[Continent] = elem.recovered;
+                      Total_ContinentWiseDeaths[Continent] = elem.deaths;
+
+                      Today_ContinentWiseCase[Continent] = elem.todayCases;
+                      Today_ContinentWiseCured[Continent] = elem.todayDeaths;
+                      Today_ContinentWiseDeaths[Continent] = elem.todayRecovered;
+
+                      Total_ContinentWiseActive[Continent] = elem.active;
+                      Total_ContinentWiseCritical[Continent] = elem.critical;
+
+                      Total_ContinentWisePopulation[Continent] = elem.population;
+                      Total_ContinentWiseTests[Continent] = elem.tests;
+
+                      ContinentWise_Countries[Continent] = elem.countries;
+                    
+                  }
+
+                  $('#Continents-map').vectorMap({
+                      map: 'continents_merc',
+                      series: {
+                          regions: [
+                              {
+                                  values: Total_ContinentWiseCase,
+                                  scale: ['#FFFFFF', '#FF0000'],
+                                  normalizeFunction: 'polynomial'
+                              }
+                              
+                          ]
+                      },
+                      backgroundColor: "#111", //#010f1a
+                      onRegionTipShow: function(e, el, code){
+
+                          //Math.round(parseFloat(Today_CountryWiseDeaths[code]) / parseFloat(Today_CountryWiseCase[code]) * 10000)/100 || 0
+                          //Math.round(parseFloat((Today_CountryWiseDeaths[code]) / (Today_CountryWiseCase[code])) * 10000)/100 || 0
+                          //parseFloat((Total_CountryWiseDeaths[code] / Total_CountryWiseCase[code]) *100).toFixed(2) || 0
+
+                          var Total_CuredPercentage = Math.round(parseFloat((Total_ContinentWiseCured[code]) / (Total_ContinentWiseCase[code])) * 10000)/100 || 0;
+                          var Total_DeathPercentage = Math.round(parseFloat((Total_ContinentWiseDeaths[code]) / (Total_ContinentWiseCase[code])) * 10000)/100 || 0;
+
+                          var Today_CuredPercentage = Math.round(parseFloat((Today_ContinentWiseCured[code]) / (Today_ContinentWiseCase[code])) * 10000)/100 || 0;
+                          var Today_DeathPercentage = Math.round(parseFloat((Today_ContinentWiseDeaths[code]) / (Today_ContinentWiseCase[code])) * 10000)/100 || 0;
+
+                          var Total_ActivePercentage = Math.round(parseFloat((Total_ContinentWiseActive[code]) / (Total_ContinentWiseCase[code])) * 10000)/100 || 0;
+                          var Total_CriticalPercentage = Math.round(parseFloat((Total_ContinentWiseCritical[code]) / (Total_ContinentWiseCase[code])) * 10000)/100 || 0;
+
+                          var Total_TestPercentage = Math.round(parseFloat((Total_ContinentWiseTests[code]) / (Total_ContinentWisePopulation[code])) * 10000)/100 || 0;
+
+                          var html = "<hr>";
+
+                          html += "<br>1.Total &nbsp; Cases : &ensp;" + Total_ContinentWiseCase[code];
+                          html += "<br>2.Total &nbsp; Cured : &ensp;" + Total_ContinentWiseCured[code] + "&ensp;[" +Total_CuredPercentage+ " %]";
+                          html += "<br>3.Total &nbsp; Death : &ensp;" + Total_ContinentWiseDeaths[code] + "&ensp;[" +Total_DeathPercentage+ " %]";
+
+                          html += "<br><br>4.Today Cases : &ensp;" + Today_ContinentWiseCase[code];
+                          html += "<br>5.Today Cured : &ensp;" + Today_ContinentWiseCured[code] + "&ensp;[" +Today_CuredPercentage+ " %]";
+                          html += "<br>6.Today Death : &ensp;" + Today_ContinentWiseDeaths[code] + "&ensp;[" +Today_DeathPercentage+ " %]";
+
+                          html += "<br><br>7.Active Cases : &ensp;" + Total_ContinentWiseActive[code] + "&ensp;[" +Total_ActivePercentage+ " %]";
+                          html += "<br>8.Critical Cases : &ensp;" + Total_ContinentWiseCritical[code] + "&ensp;[" +Total_CriticalPercentage+ " %]";
+
+                          //html += "<br><br>9.Continent : &ensp;" + ContinentWise_Countries[code];
+
+                          html += "<br><br>10.Total Tests : &ensp;" + Total_ContinentWiseTests[code] + "&ensp;[" +Total_TestPercentage+ " %]";
+                          html += "<br>11.Population : &ensp;" + Total_ContinentWisePopulation[code]; 
+
+                          //html += "<br>4.Cured Rate : &ensp;" + CuredPercentage + "%";
+                          //html += "<br>5.Death Rate : &ensp;" + DeathPercentage + "%";
+
+                          el.html(el.html()+ html);
+                      }
+                  });
+
+                  //console.log(countryWiseCase);
+
+              }
+
+          });
+
+          //$('#world-map').vectorMap({map: 'world_merc'});
+      }
+      
+      loadmap();
+
+      setInterval(function(){
+          loadmap();
+      }, 60000);
+
+    </script>
+ 
+</body>
+</html>
